@@ -4,9 +4,9 @@ package core
 // DO NOT CHANGE ANY VALUE DIRECTLY
 
 func (g *Game) gameBegin() {
-	g.invokeEvent(Event{etype: startGameEvent})
+	g.invokeEvent(event{etype: startGameEvent})
 }
 
 func (g *Game) gameEnd() {
-	g.invokeEvent(Event{etype: endGameEvent})
+	g.invokeEvent(event{etype: endGameEvent})
 }

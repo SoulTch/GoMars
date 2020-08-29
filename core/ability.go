@@ -1,7 +1,6 @@
 package core
 
-// Ability .
-type Ability interface {
+type ability interface {
 	test() bool
 	run()
 }

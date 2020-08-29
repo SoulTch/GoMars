@@ -1,23 +1,21 @@
 package core
 
-var always = func(g *Game, p *Player, d interface{}) bool {
+var always = func(d belongsToPlayer) bool {
 	return true
 }
 
-var skip = func(g *Game, p *Player, d interface{}) { /* do nothing */ }
+var skip = func(d belongsToPlayer) { /* do nothing */ }
 
-// ProjectEffects .
-var ProjectEffects = map[string]func([]int) Effect{
-	"nop": func(param []int) Effect {
-		return Effect{
+var projectEffects = map[string]func([]interface{}) effect{
+	"nop": func(param []interface{}) effect {
+		return effect{
 			condition: always,
 			effect:    skip}
 	},
-	"increase_megacredit": func(param []int) Effect {
-		amount := param[0]
-		return Effect{
+	"increase_megacredit": func(param []interface{}) effect {
+		return effect{
 			condition: always,
-			effect: func(g *Game, p *Player, d interface{}) {
-				p.getEnchant()["megacredit"] += amount
+			effect: func(d belongsToPlayer) {
+				d.getPlayer().megacredit += param[0].(int)
 			}}
 	}}

@@ -1,55 +1,86 @@
 package core
 
-// ProjectType .
-type ProjectType int
+type projectType int
 
 const (
-	eventProject = ProjectType(iota)
+	eventProject = projectType(iota)
 	normalProject
 	persistProject
+	corporation
 )
 
-// Effect struct
-type Effect struct {
-	condition func(*Game, *Player, interface{}) bool
-	effect    func(*Game, *Player, interface{})
+type effect struct {
+	condition func(belongsToPlayer) bool
+	effect    func(belongsToPlayer)
 }
 
-// ProjectInfo interface
-type ProjectInfo struct {
-	ptype ProjectType
-	code  string
-	cost  int
-	score exInt
-	tag   map[Tag]int
-
-	effect []Effect
-}
-
-// Project .
-type Project struct {
-	info *ProjectInfo
-
-	game     *Game
-	player   *Player
-	enchants map[string]int
-}
-
-func (project *Project) getEnchant() map[string]int {
-	return project.enchants
-}
-
-func (project *Project) test() bool {
-	for _, i := range project.info.effect {
-		if !i.condition(project.player.game, project.player, project) {
+func testEffects(e []effect, bp belongsToPlayer) bool {
+	for _, i := range e {
+		if !i.condition(bp) {
 			return false
 		}
 	}
 	return true
 }
 
-func (project *Project) run() {
-	for _, i := range project.info.effect {
-		i.effect(project.player.game, project.player, project)
+func runEffects(e []effect, bp belongsToPlayer) {
+	for _, i := range e {
+		i.effect(bp)
 	}
+}
+
+type projectInfo struct {
+	ptype  projectType
+	code   string
+	cost   int
+	score  exInt
+	tag    map[tag]int
+	reqTag map[tag]int
+
+	effects []effect
+}
+
+type project struct {
+	info *projectInfo
+
+	id       int
+	game     *Game
+	player   *player
+	enchants map[string]int
+}
+
+func (project *project) getEnchant() map[string]int {
+	return project.enchants
+}
+
+func (project *project) getPlayer() *player {
+	return project.player
+}
+
+func (project *project) test() bool {
+	return testEffects(project.info.effects, project)
+}
+
+func (project *project) run() {
+	runEffects(project.info.effects, project)
+}
+
+type actionInfo struct {
+	derived *projectInfo
+	effects []effect
+}
+
+type action struct {
+	info *actionInfo
+
+	id      int
+	derived *project
+}
+
+func (a *action) test() bool {
+	return testEffects(a.info.effects, a.derived)
+}
+
+func (a *action) run() {
+	runEffects(a.info.effects, a.derived)
 }

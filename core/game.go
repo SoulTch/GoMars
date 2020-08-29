@@ -16,9 +16,9 @@ type GameObject interface {
 
 // Game struct.
 type Game struct {
-	players      []*Player
+	players      []*player
 	gateway      *Gateway
-	eventHandler [][]Handler
+	eventHandler [][]handler
 
 	enchants map[string]int
 }
@@ -28,19 +28,19 @@ type GameResult struct {
 }
 
 // CreateGame creates game and initiates.
-func CreateGame(player int) (*Game, error) {
-	if player > maxPlayer {
-		return nil, fmt.Errorf("player exceeded maximum player number : %d", player)
+func CreateGame(playerCount int) (*Game, error) {
+	if playerCount > maxPlayer {
+		return nil, fmt.Errorf("player exceeded maximum player number : %d", playerCount)
 	}
 
 	game := new(Game)
-	game.players = make([]*Player, player, player)
+	game.players = make([]*player, playerCount, playerCount)
 	game.gateway = CreateGateway(game)
-	game.eventHandler = CreateEventHandler()
+	game.eventHandler = createEventHandler()
 	game.enchants = make(map[string]int)
 
-	for i := 0; i < player; i++ {
-		game.players[i] = CreatePlayer(game, i)
+	for i := 0; i < playerCount; i++ {
+		game.players[i] = createPlayer(game, i)
 	}
 
 	return game, nil
@@ -61,9 +61,9 @@ func (game *Game) getEnchant() map[string]int {
 	return game.enchants
 }
 
-func (game *Game) invokeEvent(e Event) {
+func (game *Game) invokeEvent(e event) {
 	oldHandlers := &game.eventHandler[int(e.etype)]
-	newHandlers := make([]Handler, 0, len(*oldHandlers))
+	newHandlers := make([]handler, 0, len(*oldHandlers))
 
 	for _, i := range *oldHandlers {
 		if !i.handle(game, e) {
@@ -74,6 +74,6 @@ func (game *Game) invokeEvent(e Event) {
 	oldHandlers = &newHandlers
 }
 
-func (game *Game) invokeSimpleEvent(e EventType) {
-	game.invokeEvent(Event{etype: e})
+func (game *Game) invokeSimpleEvent(e eventType) {
+	game.invokeEvent(event{etype: e})
 }

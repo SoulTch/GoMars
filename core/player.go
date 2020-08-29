@@ -1,39 +1,76 @@
 package core
 
-// Player struct.
-type Player struct {
+type player struct {
 	id   int
 	game *Game
 
-	eventHandler [][]PlayerHandler
+	eventHandler [][]playerHandler
+	tags         tags
+
+	// resources
+	terraforming int
+	megacredit   int
+	iron         int
+	titanium     int
+	energy       int
+	heat         int
+	plant        int
+
+	// productions
+	pMegacredit int
+	pIron       int
+	pTitanium   int
+	pEnerty     int
+	pHeat       int
+	pPlant      int
+
+	// trades
+	mcPerIron     int
+	mcPerTitanium int
+	cardCost      int
+
+	// reduces
+	globalReduce int
+
+	// projects
+	hand    map[int]*project
+	board   []*project
+	actions []*action
+	basics  []*basicProject
 
 	enchants map[string]int
 }
 
-// CreatePlayer creates player and initiates.
-func CreatePlayer(game *Game, id int) *Player {
-	player := new(Player)
+type belongsToPlayer interface {
+	getPlayer() *player
+}
+
+func createPlayer(game *Game, id int) *player {
+	player := new(player)
 	player.game = game
 	player.id = id
-	player.eventHandler = CreatePlayerEventHandler()
+	player.eventHandler = createPlayerEventHandler()
+	player.hand = make(map[int]*project)
+	player.actions = make([]*action, 0)
+	player.basics = make([]*basicProject, 0)
 	player.enchants = make(map[string]int)
 
 	return player
 }
 
-func (player *Player) refresh() {
+func (player *player) refresh() {
 
 }
 
-func (player *Player) getEnchant() map[string]int {
+func (player *player) getEnchant() map[string]int {
 	return player.enchants
 }
 
-func (player *Player) invokeEvent(e Event) {
+func (player *player) invokeEvent(e event) {
 	player.game.invokeEvent(e)
 
 	oldHandlers := &player.eventHandler[int(e.etype)]
-	newHandlers := make([]PlayerHandler, 0, len(*oldHandlers))
+	newHandlers := make([]playerHandler, 0, len(*oldHandlers))
 
 	for _, i := range *oldHandlers {
 		if !i.handle(player.game, player, e) {
@@ -44,6 +81,6 @@ func (player *Player) invokeEvent(e Event) {
 	oldHandlers = &newHandlers
 }
 
-func (player *Player) invokeSimpleEvent(e EventType) {
-	player.invokeEvent(Event{etype: e, player: player})
+func (player *player) invokeSimpleEvent(e eventType) {
+	player.invokeEvent(event{etype: e, player: player})
 }

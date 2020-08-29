@@ -1,50 +1,44 @@
 package core
 
-// EventType .
-type EventType int
+type eventType int
 
 const (
-	startGameEvent = EventType(iota)
+	startGameEvent = eventType(iota)
 	endGameEvent
 	esize
 )
 
 var eventSize = int(esize)
 
-// Event .
-type Event struct {
-	etype  EventType
-	player *Player
+type event struct {
+	etype  eventType
+	player *player
 	detail map[string]int
 }
 
-// Handler struct
-type Handler interface {
-	handle(*Game, Event) bool
+type handler interface {
+	handle(*Game, event) bool
 }
 
-// PlayerHandler .
-type PlayerHandler interface {
-	handle(*Game, *Player, Event) bool
+type playerHandler interface {
+	handle(*Game, *player, event) bool
 }
 
-// CreateEventHandler struct.
-func CreateEventHandler() [][]Handler {
-	h := make([][]Handler, eventSize)
+func createEventHandler() [][]handler {
+	h := make([][]handler, eventSize)
 
 	for i := 0; i < eventSize; i++ {
-		h[i] = make([]Handler, 0)
+		h[i] = make([]handler, 0)
 	}
 
 	return h
 }
 
-// CreatePlayerEventHandler .
-func CreatePlayerEventHandler() [][]PlayerHandler {
-	h := make([][]PlayerHandler, eventSize)
+func createPlayerEventHandler() [][]playerHandler {
+	h := make([][]playerHandler, eventSize)
 
 	for i := 0; i < eventSize; i++ {
-		h[i] = make([]PlayerHandler, 0)
+		h[i] = make([]playerHandler, 0)
 	}
 
 	return h
