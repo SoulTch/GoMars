@@ -3,12 +3,15 @@ package main
 import "fmt"
 
 type a struct {
-	a int
-	b int
+	x int
+}
+
+type b struct {
+	x int
+	a
 }
 
 func main() {
-	a := func() {}
-	b := a
-	fmt.Printf("%d %d", &a, &b)
+	a := b{x: 3, a: a{4}
+	fmt.Println(a.x)
 }

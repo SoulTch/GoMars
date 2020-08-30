@@ -41,8 +41,6 @@ func (bp *basicProject) test() bool {
 	return testEffects(bpData[int(bp.id)].effects, bp)
 }
 
-
-
 func (bp *basicProject) run() {
 	runEffects(bpData[int(bp.id)].effects, bp)
 }
