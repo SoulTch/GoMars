@@ -16,6 +16,6 @@ var projectEffects = map[string]func([]interface{}) effect{
 		return effect{
 			condition: always,
 			effect: func(d belongsToPlayer) {
-				d.getPlayer().megacredit += param[0].(int)
+				d.getPlayer().resources[int(megacredit)] += param[0].(int)
 			}}
 	}}

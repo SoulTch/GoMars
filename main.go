@@ -8,7 +8,7 @@ type a struct {
 }
 
 func main() {
-	x := make([]*a, 5, 5)
-
-	fmt.Printf("%d", x[0].a)
+	a := func() {}
+	b := a
+	fmt.Printf("%d %d", &a, &b)
 }

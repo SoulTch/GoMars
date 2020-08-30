@@ -9,12 +9,6 @@ const (
 	tagsize
 )
 
-type tags []int
-
-func buildTags() tags {
-	return make([]int, tagsize)
-}
-
 func toTag(str string) tag {
 	switch str {
 	case "building":

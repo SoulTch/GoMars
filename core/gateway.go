@@ -10,6 +10,7 @@ type ActionResponse interface {
 
 // AskRequest interface
 type AskRequest interface {
+	timeout() float64
 }
 
 // AskResponse interface

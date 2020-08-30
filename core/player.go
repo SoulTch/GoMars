@@ -5,28 +5,17 @@ type player struct {
 	game *Game
 
 	eventHandler [][]playerHandler
-	tags         tags
+	tags         []int
 
 	// resources
 	terraforming int
-	megacredit   int
-	iron         int
-	titanium     int
-	energy       int
-	heat         int
-	plant        int
+	resources    []int
 
 	// productions
-	pMegacredit int
-	pIron       int
-	pTitanium   int
-	pEnerty     int
-	pHeat       int
-	pPlant      int
+	production []int
 
 	// trades
-	mcPerIron     int
-	mcPerTitanium int
+	mcPerResource []int
 	cardCost      int
 
 	// reduces
@@ -50,10 +39,13 @@ func createPlayer(game *Game, id int) *player {
 	player.game = game
 	player.id = id
 	player.eventHandler = createPlayerEventHandler()
+	player.tags = make([]int, tagsize)
 	player.hand = make(map[int]*project)
 	player.actions = make([]*action, 0)
 	player.basics = make([]*basicProject, 0)
 	player.enchants = make(map[string]int)
+	player.resources = make([]int, resSize)
+	player.production = make([]int, resSize)
 
 	return player
 }
@@ -66,10 +58,10 @@ func (player *player) getEnchant() map[string]int {
 	return player.enchants
 }
 
-func (player *player) invokeEvent(e event) {
-	player.game.invokeEvent(e)
+func (player *player) invoke(e event) {
+	player.game.invoke(e)
 
-	oldHandlers := &player.eventHandler[int(e.etype)]
+	oldHandlers := &player.eventHandler[e.getEventID()]
 	newHandlers := make([]playerHandler, 0, len(*oldHandlers))
 
 	for _, i := range *oldHandlers {
@@ -79,8 +71,4 @@ func (player *player) invokeEvent(e event) {
 	}
 
 	oldHandlers = &newHandlers
-}
-
-func (player *player) invokeSimpleEvent(e eventType) {
-	player.invokeEvent(event{etype: e, player: player})
 }

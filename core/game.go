@@ -17,8 +17,11 @@ type GameObject interface {
 // Game struct.
 type Game struct {
 	players      []*player
+	board        board
 	gateway      *Gateway
 	eventHandler [][]handler
+
+	tags []int
 
 	enchants map[string]int
 }
@@ -38,6 +41,7 @@ func CreateGame(playerCount int) (*Game, error) {
 	game.gateway = CreateGateway(game)
 	game.eventHandler = createEventHandler()
 	game.enchants = make(map[string]int)
+	game.tags = make([]int, tagsize)
 
 	for i := 0; i < playerCount; i++ {
 		game.players[i] = createPlayer(game, i)
@@ -61,8 +65,8 @@ func (game *Game) getEnchant() map[string]int {
 	return game.enchants
 }
 
-func (game *Game) invokeEvent(e event) {
-	oldHandlers := &game.eventHandler[int(e.etype)]
+func (game *Game) invoke(e event) {
+	oldHandlers := &game.eventHandler[e.getEventID()]
 	newHandlers := make([]handler, 0, len(*oldHandlers))
 
 	for _, i := range *oldHandlers {
@@ -72,8 +76,4 @@ func (game *Game) invokeEvent(e event) {
 	}
 
 	oldHandlers = &newHandlers
-}
-
-func (game *Game) invokeSimpleEvent(e eventType) {
-	game.invokeEvent(event{etype: e})
 }
