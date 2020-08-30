@@ -15,7 +15,8 @@ type player struct {
 	production []int
 
 	// trades
-	mcPerResource []int
+	mcPerIron     int
+	mcPerTitanium int
 	cardCost      int
 
 	// reduces
@@ -71,4 +72,25 @@ func (player *player) invoke(e event) {
 	}
 
 	oldHandlers = &newHandlers
+}
+
+func (player *player) payable(mc int, pay payMethod) bool {
+	if player.resources[int(megacredit)] >= mc {
+		return true
+	}
+
+	avail := player.resources[int(megacredit)]
+	if pay.enabled(withIron) {
+		avail += player.resources[int(iron)] * player.mcPerIron
+	}
+
+	if pay.enabled(withTitanium) {
+		avail += player.resources[int(titanium)] * player.mcPerTitanium
+	}
+
+	if pay.enabled(withHeat) {
+		avail += player.resources[int(heat)]
+	}
+
+	return avail >= mc
 }

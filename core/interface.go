@@ -26,7 +26,7 @@ func (p *player) addResources(t resType, amount int) {
 	p.invoke(&addResourcesEvent{rtype: t, amount: amount, player: p})
 }
 
-func (p *player) payResource(t resType, amount int, methods []payMethod) {
+func (p *player) payResource(t resType, amount int, methods payMethod) {
 	// TODO
 }
 

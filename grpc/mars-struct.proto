@@ -1,0 +1,28 @@
+syntax = "proto3";
+package grpc;
+
+option go_package = "github.com/SoulTch/gomars_go";
+
+message ActionRequest {
+
+}
+
+message ActionResponse {
+
+}
+
+message AskRequest {
+
+}
+
+message AskResponse {
+
+}
+
+message NoticeResponse {
+
+}
+
+message GetRequest {
+
+}

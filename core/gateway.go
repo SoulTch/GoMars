@@ -1,49 +1,19 @@
 package core
 
-//ActionRequest .
-type ActionRequest interface {
-}
-
-//ActionResponse .
-type ActionResponse interface {
-}
-
-// AskRequest interface
-type AskRequest interface {
-	timeout() float64
-}
-
-// AskResponse interface
-type AskResponse interface {
-}
-
-// Notice .
-type Notice interface {
-}
-
-// GetRequest .
-type GetRequest interface {
-}
+import grpc "./github.com/SoulTch/gomars_go"
 
 // ActionRequestJob .
 type ActionRequestJob struct {
-	req ActionRequest
-	res chan ActionResponse
-}
-
-// AskRequestJob .
-type AskRequestJob struct {
-	req AskRequest
-	res chan AskResponse
+	req grpc.ActionRequest
+	res chan grpc.ActionResponse
 }
 
 // Gateway .
 type Gateway struct {
 	game       *Game
 	actionChan chan ActionRequestJob
-	askChan    chan AskRequestJob
-	getChan    chan GetRequest
-	noticeChan chan Notice
+	getChan    chan grpc.GetRequest
+	noticeChan chan grpc.NoticeResponse
 }
 
 // CreateGateway .
@@ -51,35 +21,26 @@ func CreateGateway(game *Game) *Gateway {
 	gateway := new(Gateway)
 	gateway.game = game
 	gateway.actionChan = make(chan ActionRequestJob)
-	gateway.askChan = make(chan AskRequestJob)
-	gateway.getChan = make(chan GetRequest)
-	gateway.noticeChan = make(chan Notice)
+	gateway.getChan = make(chan grpc.GetRequest)
+	gateway.noticeChan = make(chan grpc.NoticeResponse)
 
 	return gateway
 }
 
 // Action .
-func (g *Gateway) Action(req ActionRequest) ActionResponse {
-	res := make(chan ActionResponse, 1)
+func (g *Gateway) Action(req grpc.ActionRequest) grpc.ActionResponse {
+	res := make(chan grpc.ActionResponse, 1)
 	reqJob := ActionRequestJob{req, res}
 	g.actionChan <- reqJob
 	return <-res
 }
 
-// Ask .
-func (g *Gateway) Ask(req AskRequest) AskResponse {
-	res := make(chan AskResponse, 1)
-	reqJob := AskRequestJob{req, res}
-	g.getChan <- reqJob
-	return <-res
-}
-
 // Notice .
-func (g *Gateway) Notice(noti Notice) {
+func (g *Gateway) Notice(noti grpc.NoticeResponse) {
 	g.noticeChan <- noti
 }
 
 // Get .
-func (g *Gateway) Get(req GetRequest) {
+func (g *Gateway) Get(req grpc.GetRequest) {
 	g.getChan <- req
 }

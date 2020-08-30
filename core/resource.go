@@ -12,10 +12,22 @@ const (
 	resSize
 )
 
-type payMethod int
+type payWith int
 
 const (
-	withIron = payMethod(iota)
+	withIron = payWith(iota)
 	withTitanium
 	withHeat
 )
+
+type payMethod struct {
+	methods int
+}
+
+func (p *payMethod) add(x payWith) {
+	p.methods ^= (1 << int(x))
+}
+
+func (p *payMethod) enabled(x payWith) bool {
+	return (p.methods & (1 << int(x))) > 0
+}
