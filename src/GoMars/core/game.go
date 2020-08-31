@@ -16,6 +16,7 @@ type GameObject interface {
 
 // Game struct.
 type Game struct {
+	numPlayer    int
 	players      []*player
 	board        board
 	gateway      *Gateway

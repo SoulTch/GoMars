@@ -3,26 +3,39 @@ package core
 // You should change game state only by calling these methods.
 // DO NOT CHANGE ANY VALUE DIRECTLY
 
+const (
+	broadcast = -1
+)
+
 // game flow
 func (g *Game) gameBegin() {
+	g.gateway.notice(broadcast, "game begin", nil)
 	g.invoke(&startGameEvent{})
 }
 
 func (g *Game) gameEnd() {
+	g.gateway.notice(broadcast, "game end", nil)
 	g.invoke(&endGameEvent{})
 }
 
-func (g *Game) generationBegin() {
+func (g *Game) generationBegin(gen int) {
+	g.gateway.notice(broadcast, "generation begin", gen)
 	g.invoke(&generationBeginEvent{})
 }
 
-func (g *Game) generationEnd() {
+func (g *Game) generationEnd(gen int) {
+	g.gateway.notice(broadcast, "generation end", gen)
 	g.invoke(&generationEndEvent{})
 }
 
-// actions
 func (p *player) addResources(t resType, amount int) {
+	g := p.game
+
 	p.resources[int(t)] += amount
+	g.gateway.notice(broadcast, "add resources", map[string]interface{}{
+		"target":   p.id,
+		"res_type": string(t),
+		"amount":   amount})
 	p.invoke(&addResourcesEvent{rtype: t, amount: amount, player: p})
 }
 
